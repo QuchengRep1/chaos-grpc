@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+option go_package = "github.com/QuchengRep1/chaos-grpc";
+
+// RedisBenchmarkSpec 定义 Redis 基准测试的参数
+message RedisBenchmarkSpec {
+  string action = 1;          // 操作类型
+  string hostname = 2;        // Redis 服务器地址
+  string port = 3;            // Redis 服务器端口
+  string password = 4;        // Redis 密码（可选）
+  string requests = 5;        // 请求总数
+  string clients = 6;         // 并发客户端数
+  string size = 7;            // 请求大小（可选）
+  string loop = 8;            // 循环次数（可选）
+  string loop_duration = 9;   // 循环持续时间（可选）
+}
+
+// 请求消息：创建任务
+message CreateTaskRequest {
+  string name = 1;  // 任务名称
+  RedisBenchmarkSpec spec = 2;  // Redis 基准测试的参数
+}
+
+// 响应消息：创建任务
+message CreateTaskResponse {
+  string task_id = 1;  // 任务ID
+}
+
+// 请求消息：启动任务
+message StartTaskRequest {
+  string task_id = 1;  // 任务ID
+}
+
+// 响应消息：启动任务
+message StartTaskResponse {
+  string status = 1;  // 状态
+}
+
+// 请求消息：停止任务
+message StopTaskRequest {
+  string task_id = 1;  // 任务ID
+}
+
+// 响应消息：停止任务
+message StopTaskResponse {
+  string status = 1;  // 状态
+}
+
+// 请求消息：获取任务状态
+message GetTaskRequest {
+  string task_id = 1;  // 任务ID
+}
+
+// 响应消息：获取任务状态
+message GetTaskResponse {
+  string status = 1;  // 状态
+  string output = 2;  // 输出
+}
+
+// 请求消息：获取任务输出
+message GetTaskOutputRequest {
+  string task_id = 1;  // 任务ID
+}
+
+// 响应消息：获取任务输出
+message GetTaskOutputResponse {
+  repeated string output = 1;  // 输出
+}
+
+// gRPC 服务定义
+service CommandExecutor {
+  // 创建任务
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+
+  // 启动任务
+  rpc StartTask(StartTaskRequest) returns (StartTaskResponse);
+
+  // 停止任务
+  rpc StopTask(StopTaskRequest) returns (StopTaskResponse);
+
+  // 获取任务状态
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+
+  // 获取任务输出
+  rpc GetTaskOutput(GetTaskOutputRequest) returns (GetTaskOutputResponse);
+}
