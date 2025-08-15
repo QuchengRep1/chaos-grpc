@@ -1,8 +1,8 @@
 package main
 
 import (
-	pb "github.com/QuchengRep1/chaos-grpc/internal/proto"
-	"github.com/QuchengRep1/chaos-grpc/internal/service"
+	pb "github.com/QuchengRep1/chaos-grpc/proto"
+	"github.com/QuchengRep1/chaos-grpc/service"
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc"
 	"log"
