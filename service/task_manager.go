@@ -260,18 +260,18 @@ func (tm *TaskManager) StartTask(taskID string) error {
 }
 
 func (tm *TaskManager) StreamKafkaTask(taskID string, stream interface{}) error {
-	val, _ := tm.tasks.Load(taskID)
+	//val, _ := tm.tasks.Load(taskID)
 	//if !ok {
 	//	return fmt.Errorf("task not found")
 	//}
-	task := val.(*Task)
+	//task := val.(*Task)
 
-	task.mu.Lock()
-	defer task.mu.Unlock()
+	//task.mu.Lock()
+	//defer task.mu.Unlock()
 
-	if task.Status != "created" {
-		return fmt.Errorf("task already started or stopped")
-	}
+	//if task.Status != "created" {
+	//	return fmt.Errorf("task already started or stopped")
+	//}
 
 	args := []string{
 		"-h", "192.168.100.100",
@@ -295,29 +295,48 @@ func (tm *TaskManager) StreamKafkaTask(taskID string, stream interface{}) error 
 		return err
 	}
 
-	task.Process = cmd
-	task.Status = "running"
+	//task.Process = cmd
+	//task.Status = "running"
 
 	go func() {
+		defer func() {
+			// 命令执行完毕后关闭流
+			if err := cmd.Wait(); err != nil {
+				fmt.Printf("failed")
+			} else {
+				fmt.Printf("finished")
+			}
+		}()
+
 		scanner := bufio.NewScanner(io.MultiReader(stdoutPipe, stderrPipe))
 		for scanner.Scan() {
 			line := scanner.Text()
-			task.Output = append(task.Output, line)
+			//task.Output = append(task.Output, line)
 
 			// 根据流类型发送响应
 			switch s := stream.(type) {
 			case pb.CommandExecutor_StartKafkaProducerServer:
-				s.Send(&pb.StreamOutputResponse{Line: line})
+				if err := s.Send(&pb.StreamOutputResponse{Line: line}); err != nil {
+					log.Printf("Send error: %v", err)
+					return
+				}
 			case pb.CommandExecutor_StartKafkaConsumerServer:
-				s.Send(&pb.StreamOutputResponse{Line: line})
+				if err := s.Send(&pb.StreamOutputResponse{Line: line}); err != nil {
+					log.Printf("Send error: %v", err)
+					return
+				}
 			}
 		}
 
-		if err := cmd.Wait(); err != nil {
-			task.Status = "failed"
-		} else {
-			task.Status = "finished"
+		if err := scanner.Err(); err != nil {
+			log.Printf("Scanner error: %v", err)
 		}
+
+		//if err := cmd.Wait(); err != nil {
+		//	task.Status = "failed"
+		//} else {
+		//	task.Status = "finished"
+		//}
 	}()
 
 	return nil
