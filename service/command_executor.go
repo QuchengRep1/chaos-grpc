@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/QuchengRep1/chaos-grpc/proto"
+	pb "github.com/QuchengRep1/chaos-grpc/proto"
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -10,7 +10,7 @@ import (
 )
 
 type CommandExecutorServer struct {
-	grpc.UnimplementedCommandExecutorServer
+	pb.UnimplementedCommandExecutorServer
 	taskManager *TaskManager
 }
 
@@ -20,37 +20,62 @@ func NewCommandExecutorServer(redisClient *redis.Client) *CommandExecutorServer 
 	}
 }
 
-func (s *CommandExecutorServer) CreateTask(ctx context.Context, req *grpc.CreateTaskRequest) (*grpc.CreateTaskResponse, error) {
-	taskID := s.taskManager.CreateTask(req.Name, req.Spec)
-	return &grpc.CreateTaskResponse{TaskId: taskID}, nil
+func (s *CommandExecutorServer) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
+	var taskID string
+	//var err error
+
+	switch spec := req.GetTaskSpec().(type) {
+	case *pb.CreateTaskRequest_RedisSpec:
+		taskID = s.taskManager.CreateRedisTask(req.Name, spec.RedisSpec)
+	case *pb.CreateTaskRequest_KafkaProducerSpec:
+		taskID = s.taskManager.CreateKafkaProducerTask(req.Name, spec.KafkaProducerSpec)
+	case *pb.CreateTaskRequest_KafkaConsumerSpec:
+		taskID = s.taskManager.CreateKafkaConsumerTask(req.Name, spec.KafkaConsumerSpec)
+	default:
+		return nil, status.Errorf(codes.InvalidArgument, "unknown task type")
+	}
+
+	if taskID == "" {
+		return nil, status.Errorf(codes.Internal, "failed to create task")
+	}
+
+	return &pb.CreateTaskResponse{TaskId: taskID}, nil
 }
 
-func (s *CommandExecutorServer) StartTask(ctx context.Context, req *grpc.StartTaskRequest) (*grpc.StartTaskResponse, error) {
+func (s *CommandExecutorServer) StartTask(ctx context.Context, req *pb.StartTaskRequest) (*pb.StartTaskResponse, error) {
 	if err := s.taskManager.StartTask(req.TaskId); err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to start task: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to start task: %v", err)
 	}
-	return &grpc.StartTaskResponse{Status: "started"}, nil
+	return &pb.StartTaskResponse{Status: "started"}, nil
 }
 
-func (s *CommandExecutorServer) StopTask(ctx context.Context, req *grpc.StopTaskRequest) (*grpc.StopTaskResponse, error) {
+func (s *CommandExecutorServer) StopTask(ctx context.Context, req *pb.StopTaskRequest) (*pb.StopTaskResponse, error) {
 	if err := s.taskManager.StopTask(req.TaskId); err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to stop task: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to stop task: %v", err)
 	}
-	return &grpc.StopTaskResponse{Status: "stopped"}, nil
+	return &pb.StopTaskResponse{Status: "stopped"}, nil
 }
 
-func (s *CommandExecutorServer) GetTask(ctx context.Context, req *grpc.GetTaskRequest) (*grpc.GetTaskResponse, error) {
+func (s *CommandExecutorServer) GetTask(ctx context.Context, req *pb.GetTaskRequest) (*pb.GetTaskResponse, error) {
 	task, err := s.taskManager.GetTask(req.TaskId)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "Task not found: %v", err)
+		return nil, status.Errorf(codes.NotFound, "task not found: %v", err)
 	}
-	return &grpc.GetTaskResponse{Status: task.Status, Output: strings.Join(task.Output, "\n")}, nil
+	return &pb.GetTaskResponse{Status: task.Status, Output: strings.Join(task.Output, "\n")}, nil
 }
 
-func (s *CommandExecutorServer) GetTaskOutput(ctx context.Context, req *grpc.GetTaskOutputRequest) (*grpc.GetTaskOutputResponse, error) {
+func (s *CommandExecutorServer) GetTaskOutput(ctx context.Context, req *pb.GetTaskOutputRequest) (*pb.GetTaskOutputResponse, error) {
 	output, err := s.taskManager.GetTaskOutput(req.TaskId)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "Task not found: %v", err)
+		return nil, status.Errorf(codes.NotFound, "task not found: %v", err)
 	}
-	return &grpc.GetTaskOutputResponse{Output: output}, nil
+	return &pb.GetTaskOutputResponse{Output: output}, nil
+}
+
+func (s *CommandExecutorServer) StartKafkaProducer(req *pb.StartTaskRequest, stream pb.CommandExecutor_StartKafkaProducerServer) error {
+	return s.taskManager.StreamKafkaTask(req.TaskId, stream)
+}
+
+func (s *CommandExecutorServer) StartKafkaConsumer(req *pb.StartTaskRequest, stream pb.CommandExecutor_StartKafkaConsumerServer) error {
+	return s.taskManager.StreamKafkaTask(req.TaskId, stream)
 }

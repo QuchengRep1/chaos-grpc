@@ -4,7 +4,7 @@
 // 	protoc        v3.15.2
 // source: command.proto
 
-package chaos_grpc
+package _0250818
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -130,16 +130,15 @@ func (x *RedisBenchmarkSpec) GetLoopDuration() string {
 	return ""
 }
 
-// Kafka 生产者性能测试参数
+// Kafka 生产者性能测试的参数
 type KafkaProducerSpec struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
-	NumRecords       string                 `protobuf:"bytes,2,opt,name=num_records,json=numRecords,proto3" json:"num_records,omitempty"`
-	RecordSize       string                 `protobuf:"bytes,3,opt,name=record_size,json=recordSize,proto3" json:"record_size,omitempty"`
-	Throughput       string                 `protobuf:"bytes,4,opt,name=throughput,proto3" json:"throughput,omitempty"`
-	Acks             string                 `protobuf:"bytes,5,opt,name=acks,proto3" json:"acks,omitempty"`                                              // 0, 1, all
-	CompressionType  string                 `protobuf:"bytes,6,opt,name=compression_type,json=compressionType,proto3" json:"compression_type,omitempty"` // none, gzip, snappy, lz4
-	BootstrapServers string                 `protobuf:"bytes,7,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"`
+	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`                                               // Kafka 主题
+	NumRecords       string                 `protobuf:"bytes,2,opt,name=num_records,json=numRecords,proto3" json:"num_records,omitempty"`                   // 发送消息数量
+	RecordSize       string                 `protobuf:"bytes,3,opt,name=record_size,json=recordSize,proto3" json:"record_size,omitempty"`                   // 消息大小
+	Acks             string                 `protobuf:"bytes,4,opt,name=acks,proto3" json:"acks,omitempty"`                                                 // 确认级别
+	CompressionType  string                 `protobuf:"bytes,5,opt,name=compression_type,json=compressionType,proto3" json:"compression_type,omitempty"`    // 压缩类型
+	BootstrapServers string                 `protobuf:"bytes,6,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"` // 服务器地址
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -195,13 +194,6 @@ func (x *KafkaProducerSpec) GetRecordSize() string {
 	return ""
 }
 
-func (x *KafkaProducerSpec) GetThroughput() string {
-	if x != nil {
-		return x.Throughput
-	}
-	return ""
-}
-
 func (x *KafkaProducerSpec) GetAcks() string {
 	if x != nil {
 		return x.Acks
@@ -223,12 +215,12 @@ func (x *KafkaProducerSpec) GetBootstrapServers() string {
 	return ""
 }
 
-// Kafka 消费者性能测试参数
+// Kafka 消费者性能测试的参数
 type KafkaConsumerSpec struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
-	Messages         string                 `protobuf:"bytes,2,opt,name=messages,proto3" json:"messages,omitempty"`
-	BootstrapServers string                 `protobuf:"bytes,3,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"`
+	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`                                               // Kafka 主题
+	BootstrapServers string                 `protobuf:"bytes,2,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"` // 服务器地址
+	Messages         string                 `protobuf:"bytes,3,opt,name=messages,proto3" json:"messages,omitempty"`                                         // 消息数量
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -270,16 +262,16 @@ func (x *KafkaConsumerSpec) GetTopic() string {
 	return ""
 }
 
-func (x *KafkaConsumerSpec) GetMessages() string {
+func (x *KafkaConsumerSpec) GetBootstrapServers() string {
 	if x != nil {
-		return x.Messages
+		return x.BootstrapServers
 	}
 	return ""
 }
 
-func (x *KafkaConsumerSpec) GetBootstrapServers() string {
+func (x *KafkaConsumerSpec) GetMessages() string {
 	if x != nil {
-		return x.BootstrapServers
+		return x.Messages
 	}
 	return ""
 }
@@ -374,15 +366,15 @@ type isCreateTaskRequest_TaskSpec interface {
 }
 
 type CreateTaskRequest_RedisSpec struct {
-	RedisSpec *RedisBenchmarkSpec `protobuf:"bytes,2,opt,name=redis_spec,json=redisSpec,proto3,oneof"`
+	RedisSpec *RedisBenchmarkSpec `protobuf:"bytes,2,opt,name=redis_spec,json=redisSpec,proto3,oneof"` // Redis 基准测试的参数
 }
 
 type CreateTaskRequest_KafkaProducerSpec struct {
-	KafkaProducerSpec *KafkaProducerSpec `protobuf:"bytes,3,opt,name=kafka_producer_spec,json=kafkaProducerSpec,proto3,oneof"`
+	KafkaProducerSpec *KafkaProducerSpec `protobuf:"bytes,3,opt,name=kafka_producer_spec,json=kafkaProducerSpec,proto3,oneof"` // Kafka 生产者性能测试的参数
 }
 
 type CreateTaskRequest_KafkaConsumerSpec struct {
-	KafkaConsumerSpec *KafkaConsumerSpec `protobuf:"bytes,4,opt,name=kafka_consumer_spec,json=kafkaConsumerSpec,proto3,oneof"`
+	KafkaConsumerSpec *KafkaConsumerSpec `protobuf:"bytes,4,opt,name=kafka_consumer_spec,json=kafkaConsumerSpec,proto3,oneof"` // Kafka 消费者性能测试的参数
 }
 
 func (*CreateTaskRequest_RedisSpec) isCreateTaskRequest_TaskSpec() {}
@@ -804,28 +796,28 @@ func (x *GetTaskOutputResponse) GetOutput() []string {
 	return nil
 }
 
-// 流式响应消息
-type StreamOutputResponse struct {
+// 命令执行响应
+type CommandResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Line          string                 `protobuf:"bytes,1,opt,name=line,proto3" json:"line,omitempty"`
+	Output        string                 `protobuf:"bytes,1,opt,name=output,proto3" json:"output,omitempty"` // 输出
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *StreamOutputResponse) Reset() {
-	*x = StreamOutputResponse{}
+func (x *CommandResponse) Reset() {
+	*x = CommandResponse{}
 	mi := &file_command_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *StreamOutputResponse) String() string {
+func (x *CommandResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StreamOutputResponse) ProtoMessage() {}
+func (*CommandResponse) ProtoMessage() {}
 
-func (x *StreamOutputResponse) ProtoReflect() protoreflect.Message {
+func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_command_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -837,14 +829,14 @@ func (x *StreamOutputResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamOutputResponse.ProtoReflect.Descriptor instead.
-func (*StreamOutputResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
+func (*CommandResponse) Descriptor() ([]byte, []int) {
 	return file_command_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *StreamOutputResponse) GetLine() string {
+func (x *CommandResponse) GetOutput() string {
 	if x != nil {
-		return x.Line
+		return x.Output
 	}
 	return ""
 }
@@ -863,23 +855,20 @@ const file_command_proto_rawDesc = "" +
 	"\aclients\x18\x06 \x01(\tR\aclients\x12\x12\n" +
 	"\x04size\x18\a \x01(\tR\x04size\x12\x12\n" +
 	"\x04loop\x18\b \x01(\tR\x04loop\x12#\n" +
-	"\rloop_duration\x18\t \x01(\tR\floopDuration\"\xf7\x01\n" +
+	"\rloop_duration\x18\t \x01(\tR\floopDuration\"\xd7\x01\n" +
 	"\x11KafkaProducerSpec\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x1f\n" +
 	"\vnum_records\x18\x02 \x01(\tR\n" +
 	"numRecords\x12\x1f\n" +
 	"\vrecord_size\x18\x03 \x01(\tR\n" +
-	"recordSize\x12\x1e\n" +
-	"\n" +
-	"throughput\x18\x04 \x01(\tR\n" +
-	"throughput\x12\x12\n" +
-	"\x04acks\x18\x05 \x01(\tR\x04acks\x12)\n" +
-	"\x10compression_type\x18\x06 \x01(\tR\x0fcompressionType\x12+\n" +
-	"\x11bootstrap_servers\x18\a \x01(\tR\x10bootstrapServers\"r\n" +
+	"recordSize\x12\x12\n" +
+	"\x04acks\x18\x04 \x01(\tR\x04acks\x12)\n" +
+	"\x10compression_type\x18\x05 \x01(\tR\x0fcompressionType\x12+\n" +
+	"\x11bootstrap_servers\x18\x06 \x01(\tR\x10bootstrapServers\"r\n" +
 	"\x11KafkaConsumerSpec\x12\x14\n" +
-	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x1a\n" +
-	"\bmessages\x18\x02 \x01(\tR\bmessages\x12+\n" +
-	"\x11bootstrap_servers\x18\x03 \x01(\tR\x10bootstrapServers\"\xf6\x01\n" +
+	"\x05topic\x18\x01 \x01(\tR\x05topic\x12+\n" +
+	"\x11bootstrap_servers\x18\x02 \x01(\tR\x10bootstrapServers\x12\x1a\n" +
+	"\bmessages\x18\x03 \x01(\tR\bmessages\"\xf6\x01\n" +
 	"\x11CreateTaskRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x124\n" +
 	"\n" +
@@ -905,9 +894,9 @@ const file_command_proto_rawDesc = "" +
 	"\x14GetTaskOutputRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\"/\n" +
 	"\x15GetTaskOutputResponse\x12\x16\n" +
-	"\x06output\x18\x01 \x03(\tR\x06output\"*\n" +
-	"\x14StreamOutputResponse\x12\x12\n" +
-	"\x04line\x18\x01 \x01(\tR\x04line2\x9f\x03\n" +
+	"\x06output\x18\x01 \x03(\tR\x06output\")\n" +
+	"\x0fCommandResponse\x12\x16\n" +
+	"\x06output\x18\x01 \x01(\tR\x06output2\x9f\x03\n" +
 	"\x0fCommandExecutor\x125\n" +
 	"\n" +
 	"CreateTask\x12\x12.CreateTaskRequest\x1a\x13.CreateTaskResponse\x122\n" +
@@ -915,8 +904,8 @@ const file_command_proto_rawDesc = "" +
 	"\bStopTask\x12\x10.StopTaskRequest\x1a\x11.StopTaskResponse\x12,\n" +
 	"\aGetTask\x12\x0f.GetTaskRequest\x1a\x10.GetTaskResponse\x12>\n" +
 	"\rGetTaskOutput\x12\x15.GetTaskOutputRequest\x1a\x16.GetTaskOutputResponse\x12@\n" +
-	"\x12StartKafkaProducer\x12\x11.StartTaskRequest\x1a\x15.StreamOutputResponse0\x01\x12@\n" +
-	"\x12StartKafkaConsumer\x12\x11.StartTaskRequest\x1a\x15.StreamOutputResponse0\x01B#Z!github.com/QuchengRep1/chaos-grpcb\x06proto3"
+	"\x16StartKafkaProducerTest\x12\x12.KafkaProducerSpec\x1a\x10.CommandResponse0\x01\x12@\n" +
+	"\x16StartKafkaConsumerTest\x12\x12.KafkaConsumerSpec\x1a\x10.CommandResponse0\x01B#Z!github.com/QuchengRep1/chaos-grpcb\x06proto3"
 
 var (
 	file_command_proto_rawDescOnce sync.Once
@@ -945,7 +934,7 @@ var file_command_proto_goTypes = []any{
 	(*GetTaskResponse)(nil),       // 10: GetTaskResponse
 	(*GetTaskOutputRequest)(nil),  // 11: GetTaskOutputRequest
 	(*GetTaskOutputResponse)(nil), // 12: GetTaskOutputResponse
-	(*StreamOutputResponse)(nil),  // 13: StreamOutputResponse
+	(*CommandResponse)(nil),       // 13: CommandResponse
 }
 var file_command_proto_depIdxs = []int32{
 	0,  // 0: CreateTaskRequest.redis_spec:type_name -> RedisBenchmarkSpec
@@ -956,15 +945,15 @@ var file_command_proto_depIdxs = []int32{
 	7,  // 5: CommandExecutor.StopTask:input_type -> StopTaskRequest
 	9,  // 6: CommandExecutor.GetTask:input_type -> GetTaskRequest
 	11, // 7: CommandExecutor.GetTaskOutput:input_type -> GetTaskOutputRequest
-	5,  // 8: CommandExecutor.StartKafkaProducer:input_type -> StartTaskRequest
-	5,  // 9: CommandExecutor.StartKafkaConsumer:input_type -> StartTaskRequest
+	1,  // 8: CommandExecutor.StartKafkaProducerTest:input_type -> KafkaProducerSpec
+	2,  // 9: CommandExecutor.StartKafkaConsumerTest:input_type -> KafkaConsumerSpec
 	4,  // 10: CommandExecutor.CreateTask:output_type -> CreateTaskResponse
 	6,  // 11: CommandExecutor.StartTask:output_type -> StartTaskResponse
 	8,  // 12: CommandExecutor.StopTask:output_type -> StopTaskResponse
 	10, // 13: CommandExecutor.GetTask:output_type -> GetTaskResponse
 	12, // 14: CommandExecutor.GetTaskOutput:output_type -> GetTaskOutputResponse
-	13, // 15: CommandExecutor.StartKafkaProducer:output_type -> StreamOutputResponse
-	13, // 16: CommandExecutor.StartKafkaConsumer:output_type -> StreamOutputResponse
+	13, // 15: CommandExecutor.StartKafkaProducerTest:output_type -> CommandResponse
+	13, // 16: CommandExecutor.StartKafkaConsumerTest:output_type -> CommandResponse
 	10, // [10:17] is the sub-list for method output_type
 	3,  // [3:10] is the sub-list for method input_type
 	3,  // [3:3] is the sub-list for extension type_name

@@ -4,7 +4,7 @@
 // 	protoc        v3.15.2
 // source: command.proto
 
-package chaos_grpc
+package ori
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -130,177 +130,18 @@ func (x *RedisBenchmarkSpec) GetLoopDuration() string {
 	return ""
 }
 
-// Kafka 生产者性能测试参数
-type KafkaProducerSpec struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
-	NumRecords       string                 `protobuf:"bytes,2,opt,name=num_records,json=numRecords,proto3" json:"num_records,omitempty"`
-	RecordSize       string                 `protobuf:"bytes,3,opt,name=record_size,json=recordSize,proto3" json:"record_size,omitempty"`
-	Throughput       string                 `protobuf:"bytes,4,opt,name=throughput,proto3" json:"throughput,omitempty"`
-	Acks             string                 `protobuf:"bytes,5,opt,name=acks,proto3" json:"acks,omitempty"`                                              // 0, 1, all
-	CompressionType  string                 `protobuf:"bytes,6,opt,name=compression_type,json=compressionType,proto3" json:"compression_type,omitempty"` // none, gzip, snappy, lz4
-	BootstrapServers string                 `protobuf:"bytes,7,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *KafkaProducerSpec) Reset() {
-	*x = KafkaProducerSpec{}
-	mi := &file_command_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *KafkaProducerSpec) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*KafkaProducerSpec) ProtoMessage() {}
-
-func (x *KafkaProducerSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use KafkaProducerSpec.ProtoReflect.Descriptor instead.
-func (*KafkaProducerSpec) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *KafkaProducerSpec) GetTopic() string {
-	if x != nil {
-		return x.Topic
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetNumRecords() string {
-	if x != nil {
-		return x.NumRecords
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetRecordSize() string {
-	if x != nil {
-		return x.RecordSize
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetThroughput() string {
-	if x != nil {
-		return x.Throughput
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetAcks() string {
-	if x != nil {
-		return x.Acks
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetCompressionType() string {
-	if x != nil {
-		return x.CompressionType
-	}
-	return ""
-}
-
-func (x *KafkaProducerSpec) GetBootstrapServers() string {
-	if x != nil {
-		return x.BootstrapServers
-	}
-	return ""
-}
-
-// Kafka 消费者性能测试参数
-type KafkaConsumerSpec struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Topic            string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
-	Messages         string                 `protobuf:"bytes,2,opt,name=messages,proto3" json:"messages,omitempty"`
-	BootstrapServers string                 `protobuf:"bytes,3,opt,name=bootstrap_servers,json=bootstrapServers,proto3" json:"bootstrap_servers,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *KafkaConsumerSpec) Reset() {
-	*x = KafkaConsumerSpec{}
-	mi := &file_command_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *KafkaConsumerSpec) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*KafkaConsumerSpec) ProtoMessage() {}
-
-func (x *KafkaConsumerSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use KafkaConsumerSpec.ProtoReflect.Descriptor instead.
-func (*KafkaConsumerSpec) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *KafkaConsumerSpec) GetTopic() string {
-	if x != nil {
-		return x.Topic
-	}
-	return ""
-}
-
-func (x *KafkaConsumerSpec) GetMessages() string {
-	if x != nil {
-		return x.Messages
-	}
-	return ""
-}
-
-func (x *KafkaConsumerSpec) GetBootstrapServers() string {
-	if x != nil {
-		return x.BootstrapServers
-	}
-	return ""
-}
-
 // 请求消息：创建任务
 type CreateTaskRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` // 任务名称
-	// Types that are valid to be assigned to TaskSpec:
-	//
-	//	*CreateTaskRequest_RedisSpec
-	//	*CreateTaskRequest_KafkaProducerSpec
-	//	*CreateTaskRequest_KafkaConsumerSpec
-	TaskSpec      isCreateTaskRequest_TaskSpec `protobuf_oneof:"task_spec"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` // 任务名称
+	Spec          *RedisBenchmarkSpec    `protobuf:"bytes,2,opt,name=spec,proto3" json:"spec,omitempty"` // Redis 基准测试的参数
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateTaskRequest) Reset() {
 	*x = CreateTaskRequest{}
-	mi := &file_command_proto_msgTypes[3]
+	mi := &file_command_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -312,7 +153,7 @@ func (x *CreateTaskRequest) String() string {
 func (*CreateTaskRequest) ProtoMessage() {}
 
 func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[3]
+	mi := &file_command_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -325,7 +166,7 @@ func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTaskRequest.ProtoReflect.Descriptor instead.
 func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{3}
+	return file_command_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateTaskRequest) GetName() string {
@@ -335,61 +176,12 @@ func (x *CreateTaskRequest) GetName() string {
 	return ""
 }
 
-func (x *CreateTaskRequest) GetTaskSpec() isCreateTaskRequest_TaskSpec {
+func (x *CreateTaskRequest) GetSpec() *RedisBenchmarkSpec {
 	if x != nil {
-		return x.TaskSpec
+		return x.Spec
 	}
 	return nil
 }
-
-func (x *CreateTaskRequest) GetRedisSpec() *RedisBenchmarkSpec {
-	if x != nil {
-		if x, ok := x.TaskSpec.(*CreateTaskRequest_RedisSpec); ok {
-			return x.RedisSpec
-		}
-	}
-	return nil
-}
-
-func (x *CreateTaskRequest) GetKafkaProducerSpec() *KafkaProducerSpec {
-	if x != nil {
-		if x, ok := x.TaskSpec.(*CreateTaskRequest_KafkaProducerSpec); ok {
-			return x.KafkaProducerSpec
-		}
-	}
-	return nil
-}
-
-func (x *CreateTaskRequest) GetKafkaConsumerSpec() *KafkaConsumerSpec {
-	if x != nil {
-		if x, ok := x.TaskSpec.(*CreateTaskRequest_KafkaConsumerSpec); ok {
-			return x.KafkaConsumerSpec
-		}
-	}
-	return nil
-}
-
-type isCreateTaskRequest_TaskSpec interface {
-	isCreateTaskRequest_TaskSpec()
-}
-
-type CreateTaskRequest_RedisSpec struct {
-	RedisSpec *RedisBenchmarkSpec `protobuf:"bytes,2,opt,name=redis_spec,json=redisSpec,proto3,oneof"`
-}
-
-type CreateTaskRequest_KafkaProducerSpec struct {
-	KafkaProducerSpec *KafkaProducerSpec `protobuf:"bytes,3,opt,name=kafka_producer_spec,json=kafkaProducerSpec,proto3,oneof"`
-}
-
-type CreateTaskRequest_KafkaConsumerSpec struct {
-	KafkaConsumerSpec *KafkaConsumerSpec `protobuf:"bytes,4,opt,name=kafka_consumer_spec,json=kafkaConsumerSpec,proto3,oneof"`
-}
-
-func (*CreateTaskRequest_RedisSpec) isCreateTaskRequest_TaskSpec() {}
-
-func (*CreateTaskRequest_KafkaProducerSpec) isCreateTaskRequest_TaskSpec() {}
-
-func (*CreateTaskRequest_KafkaConsumerSpec) isCreateTaskRequest_TaskSpec() {}
 
 // 响应消息：创建任务
 type CreateTaskResponse struct {
@@ -401,7 +193,7 @@ type CreateTaskResponse struct {
 
 func (x *CreateTaskResponse) Reset() {
 	*x = CreateTaskResponse{}
-	mi := &file_command_proto_msgTypes[4]
+	mi := &file_command_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -413,7 +205,7 @@ func (x *CreateTaskResponse) String() string {
 func (*CreateTaskResponse) ProtoMessage() {}
 
 func (x *CreateTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[4]
+	mi := &file_command_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -426,7 +218,7 @@ func (x *CreateTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTaskResponse.ProtoReflect.Descriptor instead.
 func (*CreateTaskResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{4}
+	return file_command_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateTaskResponse) GetTaskId() string {
@@ -446,7 +238,7 @@ type StartTaskRequest struct {
 
 func (x *StartTaskRequest) Reset() {
 	*x = StartTaskRequest{}
-	mi := &file_command_proto_msgTypes[5]
+	mi := &file_command_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -458,7 +250,7 @@ func (x *StartTaskRequest) String() string {
 func (*StartTaskRequest) ProtoMessage() {}
 
 func (x *StartTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[5]
+	mi := &file_command_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -471,7 +263,7 @@ func (x *StartTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTaskRequest.ProtoReflect.Descriptor instead.
 func (*StartTaskRequest) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{5}
+	return file_command_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StartTaskRequest) GetTaskId() string {
@@ -491,7 +283,7 @@ type StartTaskResponse struct {
 
 func (x *StartTaskResponse) Reset() {
 	*x = StartTaskResponse{}
-	mi := &file_command_proto_msgTypes[6]
+	mi := &file_command_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -503,7 +295,7 @@ func (x *StartTaskResponse) String() string {
 func (*StartTaskResponse) ProtoMessage() {}
 
 func (x *StartTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[6]
+	mi := &file_command_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -516,7 +308,7 @@ func (x *StartTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTaskResponse.ProtoReflect.Descriptor instead.
 func (*StartTaskResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{6}
+	return file_command_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StartTaskResponse) GetStatus() string {
@@ -536,7 +328,7 @@ type StopTaskRequest struct {
 
 func (x *StopTaskRequest) Reset() {
 	*x = StopTaskRequest{}
-	mi := &file_command_proto_msgTypes[7]
+	mi := &file_command_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -548,7 +340,7 @@ func (x *StopTaskRequest) String() string {
 func (*StopTaskRequest) ProtoMessage() {}
 
 func (x *StopTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[7]
+	mi := &file_command_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -561,7 +353,7 @@ func (x *StopTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTaskRequest.ProtoReflect.Descriptor instead.
 func (*StopTaskRequest) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{7}
+	return file_command_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StopTaskRequest) GetTaskId() string {
@@ -581,7 +373,7 @@ type StopTaskResponse struct {
 
 func (x *StopTaskResponse) Reset() {
 	*x = StopTaskResponse{}
-	mi := &file_command_proto_msgTypes[8]
+	mi := &file_command_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -593,7 +385,7 @@ func (x *StopTaskResponse) String() string {
 func (*StopTaskResponse) ProtoMessage() {}
 
 func (x *StopTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[8]
+	mi := &file_command_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -606,7 +398,7 @@ func (x *StopTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTaskResponse.ProtoReflect.Descriptor instead.
 func (*StopTaskResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{8}
+	return file_command_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StopTaskResponse) GetStatus() string {
@@ -626,7 +418,7 @@ type GetTaskRequest struct {
 
 func (x *GetTaskRequest) Reset() {
 	*x = GetTaskRequest{}
-	mi := &file_command_proto_msgTypes[9]
+	mi := &file_command_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -638,7 +430,7 @@ func (x *GetTaskRequest) String() string {
 func (*GetTaskRequest) ProtoMessage() {}
 
 func (x *GetTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[9]
+	mi := &file_command_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -651,7 +443,7 @@ func (x *GetTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaskRequest.ProtoReflect.Descriptor instead.
 func (*GetTaskRequest) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{9}
+	return file_command_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetTaskRequest) GetTaskId() string {
@@ -672,7 +464,7 @@ type GetTaskResponse struct {
 
 func (x *GetTaskResponse) Reset() {
 	*x = GetTaskResponse{}
-	mi := &file_command_proto_msgTypes[10]
+	mi := &file_command_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -684,7 +476,7 @@ func (x *GetTaskResponse) String() string {
 func (*GetTaskResponse) ProtoMessage() {}
 
 func (x *GetTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[10]
+	mi := &file_command_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -697,7 +489,7 @@ func (x *GetTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaskResponse.ProtoReflect.Descriptor instead.
 func (*GetTaskResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{10}
+	return file_command_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetTaskResponse) GetStatus() string {
@@ -724,7 +516,7 @@ type GetTaskOutputRequest struct {
 
 func (x *GetTaskOutputRequest) Reset() {
 	*x = GetTaskOutputRequest{}
-	mi := &file_command_proto_msgTypes[11]
+	mi := &file_command_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -736,7 +528,7 @@ func (x *GetTaskOutputRequest) String() string {
 func (*GetTaskOutputRequest) ProtoMessage() {}
 
 func (x *GetTaskOutputRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[11]
+	mi := &file_command_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -749,7 +541,7 @@ func (x *GetTaskOutputRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaskOutputRequest.ProtoReflect.Descriptor instead.
 func (*GetTaskOutputRequest) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{11}
+	return file_command_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetTaskOutputRequest) GetTaskId() string {
@@ -769,7 +561,7 @@ type GetTaskOutputResponse struct {
 
 func (x *GetTaskOutputResponse) Reset() {
 	*x = GetTaskOutputResponse{}
-	mi := &file_command_proto_msgTypes[12]
+	mi := &file_command_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -781,7 +573,7 @@ func (x *GetTaskOutputResponse) String() string {
 func (*GetTaskOutputResponse) ProtoMessage() {}
 
 func (x *GetTaskOutputResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[12]
+	mi := &file_command_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -794,7 +586,7 @@ func (x *GetTaskOutputResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaskOutputResponse.ProtoReflect.Descriptor instead.
 func (*GetTaskOutputResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{12}
+	return file_command_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetTaskOutputResponse) GetOutput() []string {
@@ -804,56 +596,11 @@ func (x *GetTaskOutputResponse) GetOutput() []string {
 	return nil
 }
 
-// 流式响应消息
-type StreamOutputResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Line          string                 `protobuf:"bytes,1,opt,name=line,proto3" json:"line,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StreamOutputResponse) Reset() {
-	*x = StreamOutputResponse{}
-	mi := &file_command_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StreamOutputResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StreamOutputResponse) ProtoMessage() {}
-
-func (x *StreamOutputResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_command_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StreamOutputResponse.ProtoReflect.Descriptor instead.
-func (*StreamOutputResponse) Descriptor() ([]byte, []int) {
-	return file_command_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *StreamOutputResponse) GetLine() string {
-	if x != nil {
-		return x.Line
-	}
-	return ""
-}
-
 var File_command_proto protoreflect.FileDescriptor
 
 const file_command_proto_rawDesc = "" +
 	"\n" +
-	"\rcommand.proto\"\xfb\x01\n" +
+	"\rcommand.proto\x12\acommand\"\xfb\x01\n" +
 	"\x12RedisBenchmarkSpec\x12\x16\n" +
 	"\x06action\x18\x01 \x01(\tR\x06action\x12\x1a\n" +
 	"\bhostname\x18\x02 \x01(\tR\bhostname\x12\x12\n" +
@@ -863,30 +610,10 @@ const file_command_proto_rawDesc = "" +
 	"\aclients\x18\x06 \x01(\tR\aclients\x12\x12\n" +
 	"\x04size\x18\a \x01(\tR\x04size\x12\x12\n" +
 	"\x04loop\x18\b \x01(\tR\x04loop\x12#\n" +
-	"\rloop_duration\x18\t \x01(\tR\floopDuration\"\xf7\x01\n" +
-	"\x11KafkaProducerSpec\x12\x14\n" +
-	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x1f\n" +
-	"\vnum_records\x18\x02 \x01(\tR\n" +
-	"numRecords\x12\x1f\n" +
-	"\vrecord_size\x18\x03 \x01(\tR\n" +
-	"recordSize\x12\x1e\n" +
-	"\n" +
-	"throughput\x18\x04 \x01(\tR\n" +
-	"throughput\x12\x12\n" +
-	"\x04acks\x18\x05 \x01(\tR\x04acks\x12)\n" +
-	"\x10compression_type\x18\x06 \x01(\tR\x0fcompressionType\x12+\n" +
-	"\x11bootstrap_servers\x18\a \x01(\tR\x10bootstrapServers\"r\n" +
-	"\x11KafkaConsumerSpec\x12\x14\n" +
-	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x1a\n" +
-	"\bmessages\x18\x02 \x01(\tR\bmessages\x12+\n" +
-	"\x11bootstrap_servers\x18\x03 \x01(\tR\x10bootstrapServers\"\xf6\x01\n" +
+	"\rloop_duration\x18\t \x01(\tR\floopDuration\"X\n" +
 	"\x11CreateTaskRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x124\n" +
-	"\n" +
-	"redis_spec\x18\x02 \x01(\v2\x13.RedisBenchmarkSpecH\x00R\tredisSpec\x12D\n" +
-	"\x13kafka_producer_spec\x18\x03 \x01(\v2\x12.KafkaProducerSpecH\x00R\x11kafkaProducerSpec\x12D\n" +
-	"\x13kafka_consumer_spec\x18\x04 \x01(\v2\x12.KafkaConsumerSpecH\x00R\x11kafkaConsumerSpecB\v\n" +
-	"\ttask_spec\"-\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12/\n" +
+	"\x04spec\x18\x02 \x01(\v2\x1b.command.RedisBenchmarkSpecR\x04spec\"-\n" +
 	"\x12CreateTaskResponse\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\"+\n" +
 	"\x10StartTaskRequest\x12\x17\n" +
@@ -905,18 +632,14 @@ const file_command_proto_rawDesc = "" +
 	"\x14GetTaskOutputRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\"/\n" +
 	"\x15GetTaskOutputResponse\x12\x16\n" +
-	"\x06output\x18\x01 \x03(\tR\x06output\"*\n" +
-	"\x14StreamOutputResponse\x12\x12\n" +
-	"\x04line\x18\x01 \x01(\tR\x04line2\x9f\x03\n" +
-	"\x0fCommandExecutor\x125\n" +
+	"\x06output\x18\x01 \x03(\tR\x06output2\xeb\x02\n" +
+	"\x0fCommandExecutor\x12E\n" +
 	"\n" +
-	"CreateTask\x12\x12.CreateTaskRequest\x1a\x13.CreateTaskResponse\x122\n" +
-	"\tStartTask\x12\x11.StartTaskRequest\x1a\x12.StartTaskResponse\x12/\n" +
-	"\bStopTask\x12\x10.StopTaskRequest\x1a\x11.StopTaskResponse\x12,\n" +
-	"\aGetTask\x12\x0f.GetTaskRequest\x1a\x10.GetTaskResponse\x12>\n" +
-	"\rGetTaskOutput\x12\x15.GetTaskOutputRequest\x1a\x16.GetTaskOutputResponse\x12@\n" +
-	"\x12StartKafkaProducer\x12\x11.StartTaskRequest\x1a\x15.StreamOutputResponse0\x01\x12@\n" +
-	"\x12StartKafkaConsumer\x12\x11.StartTaskRequest\x1a\x15.StreamOutputResponse0\x01B#Z!github.com/QuchengRep1/chaos-grpcb\x06proto3"
+	"CreateTask\x12\x1a.command.CreateTaskRequest\x1a\x1b.command.CreateTaskResponse\x12B\n" +
+	"\tStartTask\x12\x19.command.StartTaskRequest\x1a\x1a.command.StartTaskResponse\x12?\n" +
+	"\bStopTask\x12\x18.command.StopTaskRequest\x1a\x19.command.StopTaskResponse\x12<\n" +
+	"\aGetTask\x12\x17.command.GetTaskRequest\x1a\x18.command.GetTaskResponse\x12N\n" +
+	"\rGetTaskOutput\x12\x1d.command.GetTaskOutputRequest\x1a\x1e.command.GetTaskOutputResponseB\x1cZ\x1agithub.com/chaos-mesh/grpcb\x06proto3"
 
 var (
 	file_command_proto_rawDescOnce sync.Once
@@ -930,46 +653,37 @@ func file_command_proto_rawDescGZIP() []byte {
 	return file_command_proto_rawDescData
 }
 
-var file_command_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_command_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_command_proto_goTypes = []any{
-	(*RedisBenchmarkSpec)(nil),    // 0: RedisBenchmarkSpec
-	(*KafkaProducerSpec)(nil),     // 1: KafkaProducerSpec
-	(*KafkaConsumerSpec)(nil),     // 2: KafkaConsumerSpec
-	(*CreateTaskRequest)(nil),     // 3: CreateTaskRequest
-	(*CreateTaskResponse)(nil),    // 4: CreateTaskResponse
-	(*StartTaskRequest)(nil),      // 5: StartTaskRequest
-	(*StartTaskResponse)(nil),     // 6: StartTaskResponse
-	(*StopTaskRequest)(nil),       // 7: StopTaskRequest
-	(*StopTaskResponse)(nil),      // 8: StopTaskResponse
-	(*GetTaskRequest)(nil),        // 9: GetTaskRequest
-	(*GetTaskResponse)(nil),       // 10: GetTaskResponse
-	(*GetTaskOutputRequest)(nil),  // 11: GetTaskOutputRequest
-	(*GetTaskOutputResponse)(nil), // 12: GetTaskOutputResponse
-	(*StreamOutputResponse)(nil),  // 13: StreamOutputResponse
+	(*RedisBenchmarkSpec)(nil),    // 0: command.RedisBenchmarkSpec
+	(*CreateTaskRequest)(nil),     // 1: command.CreateTaskRequest
+	(*CreateTaskResponse)(nil),    // 2: command.CreateTaskResponse
+	(*StartTaskRequest)(nil),      // 3: command.StartTaskRequest
+	(*StartTaskResponse)(nil),     // 4: command.StartTaskResponse
+	(*StopTaskRequest)(nil),       // 5: command.StopTaskRequest
+	(*StopTaskResponse)(nil),      // 6: command.StopTaskResponse
+	(*GetTaskRequest)(nil),        // 7: command.GetTaskRequest
+	(*GetTaskResponse)(nil),       // 8: command.GetTaskResponse
+	(*GetTaskOutputRequest)(nil),  // 9: command.GetTaskOutputRequest
+	(*GetTaskOutputResponse)(nil), // 10: command.GetTaskOutputResponse
 }
 var file_command_proto_depIdxs = []int32{
-	0,  // 0: CreateTaskRequest.redis_spec:type_name -> RedisBenchmarkSpec
-	1,  // 1: CreateTaskRequest.kafka_producer_spec:type_name -> KafkaProducerSpec
-	2,  // 2: CreateTaskRequest.kafka_consumer_spec:type_name -> KafkaConsumerSpec
-	3,  // 3: CommandExecutor.CreateTask:input_type -> CreateTaskRequest
-	5,  // 4: CommandExecutor.StartTask:input_type -> StartTaskRequest
-	7,  // 5: CommandExecutor.StopTask:input_type -> StopTaskRequest
-	9,  // 6: CommandExecutor.GetTask:input_type -> GetTaskRequest
-	11, // 7: CommandExecutor.GetTaskOutput:input_type -> GetTaskOutputRequest
-	5,  // 8: CommandExecutor.StartKafkaProducer:input_type -> StartTaskRequest
-	5,  // 9: CommandExecutor.StartKafkaConsumer:input_type -> StartTaskRequest
-	4,  // 10: CommandExecutor.CreateTask:output_type -> CreateTaskResponse
-	6,  // 11: CommandExecutor.StartTask:output_type -> StartTaskResponse
-	8,  // 12: CommandExecutor.StopTask:output_type -> StopTaskResponse
-	10, // 13: CommandExecutor.GetTask:output_type -> GetTaskResponse
-	12, // 14: CommandExecutor.GetTaskOutput:output_type -> GetTaskOutputResponse
-	13, // 15: CommandExecutor.StartKafkaProducer:output_type -> StreamOutputResponse
-	13, // 16: CommandExecutor.StartKafkaConsumer:output_type -> StreamOutputResponse
-	10, // [10:17] is the sub-list for method output_type
-	3,  // [3:10] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	0,  // 0: command.CreateTaskRequest.spec:type_name -> command.RedisBenchmarkSpec
+	1,  // 1: command.CommandExecutor.CreateTask:input_type -> command.CreateTaskRequest
+	3,  // 2: command.CommandExecutor.StartTask:input_type -> command.StartTaskRequest
+	5,  // 3: command.CommandExecutor.StopTask:input_type -> command.StopTaskRequest
+	7,  // 4: command.CommandExecutor.GetTask:input_type -> command.GetTaskRequest
+	9,  // 5: command.CommandExecutor.GetTaskOutput:input_type -> command.GetTaskOutputRequest
+	2,  // 6: command.CommandExecutor.CreateTask:output_type -> command.CreateTaskResponse
+	4,  // 7: command.CommandExecutor.StartTask:output_type -> command.StartTaskResponse
+	6,  // 8: command.CommandExecutor.StopTask:output_type -> command.StopTaskResponse
+	8,  // 9: command.CommandExecutor.GetTask:output_type -> command.GetTaskResponse
+	10, // 10: command.CommandExecutor.GetTaskOutput:output_type -> command.GetTaskOutputResponse
+	6,  // [6:11] is the sub-list for method output_type
+	1,  // [1:6] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_command_proto_init() }
@@ -977,18 +691,13 @@ func file_command_proto_init() {
 	if File_command_proto != nil {
 		return
 	}
-	file_command_proto_msgTypes[3].OneofWrappers = []any{
-		(*CreateTaskRequest_RedisSpec)(nil),
-		(*CreateTaskRequest_KafkaProducerSpec)(nil),
-		(*CreateTaskRequest_KafkaConsumerSpec)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_command_proto_rawDesc), len(file_command_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
