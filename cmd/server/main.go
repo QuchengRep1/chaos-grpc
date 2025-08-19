@@ -5,6 +5,7 @@ import (
 	"github.com/QuchengRep1/chaos-grpc/service"
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 )
@@ -23,6 +24,9 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterCommandExecutorServer(s, service.NewCommandExecutorServer(redisClient))
+
+	// 启用反射（关键添加）
+	reflection.Register(s)
 
 	log.Println("gRPC server started on port 50051")
 	if err := s.Serve(lis); err != nil {

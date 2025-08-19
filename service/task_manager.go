@@ -259,7 +259,7 @@ func (tm *TaskManager) StartTask(taskID string) error {
 	return nil
 }
 
-func (tm *TaskManager) StreamKafkaTask(taskID string, stream interface{}) error {
+func (tm *TaskManager) StreamKafkaProducerTask(taskID string, stream pb.CommandExecutor_StartKafkaProducerServer) error {
 	//val, _ := tm.tasks.Load(taskID)
 	//if !ok {
 	//	return fmt.Errorf("task not found")
@@ -282,6 +282,7 @@ func (tm *TaskManager) StreamKafkaTask(taskID string, stream interface{}) error 
 	}
 
 	cmd := exec.Command("redis-benchmark", args...)
+
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
@@ -299,16 +300,114 @@ func (tm *TaskManager) StreamKafkaTask(taskID string, stream interface{}) error 
 	//task.Status = "running"
 
 	go func() {
-		defer func() {
-			// 命令执行完毕后关闭流
-			if err := cmd.Wait(); err != nil {
-				fmt.Printf("failed")
-			} else {
-				fmt.Printf("finished")
-			}
-		}()
 
 		scanner := bufio.NewScanner(io.MultiReader(stdoutPipe, stderrPipe))
+		scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+			if atEOF {
+				if len(data) > 0 {
+					return len(data), data, nil
+				}
+				return 0, nil, nil
+			}
+			for i := 0; i < len(data); i++ {
+				if data[i] == '\n' || data[i] == '\r' {
+					return i + 1, data[:i+1], nil
+				}
+			}
+			return 0, nil, nil
+		})
+
+		for scanner.Scan() {
+			line := scanner.Text()
+			//task.Output = append(task.Output, line)
+
+			// 根据流类型发送响应
+			switch s := stream.(type) {
+			case pb.CommandExecutor_StartKafkaProducerServer:
+				if err := s.Send(&pb.StreamOutputResponse{Line: line}); err != nil {
+					log.Printf("Send error: %v", err)
+					return
+				}
+			case pb.CommandExecutor_StartKafkaConsumerServer:
+				if err := s.Send(&pb.StreamOutputResponse{Line: line}); err != nil {
+					log.Printf("Send error: %v", err)
+					return
+				}
+			}
+		}
+
+		if err := scanner.Err(); err != nil {
+			log.Printf("Scanner error: %v", err)
+		}
+
+		//if err := cmd.Wait(); err != nil {
+		//	task.Status = "failed"
+		//} else {
+		//	task.Status = "finished"
+		//}
+	}()
+
+	return nil
+}
+
+func (tm *TaskManager) StreamKafkaConsumerTask(taskID string, stream pb.CommandExecutor_StartKafkaConsumerServer) error {
+	//val, _ := tm.tasks.Load(taskID)
+	//if !ok {
+	//	return fmt.Errorf("task not found")
+	//}
+	//task := val.(*Task)
+
+	//task.mu.Lock()
+	//defer task.mu.Unlock()
+
+	//if task.Status != "created" {
+	//	return fmt.Errorf("task already started or stopped")
+	//}
+
+	args := []string{
+		"-h", "192.168.100.100",
+		"-p", "6379",
+		"-a", "qucheng",
+		"-n", "100000",
+		"-c", "20",
+	}
+
+	cmd := exec.Command("redis-benchmark", args...)
+
+	stdoutPipe, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	stderrPipe, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+
+	//task.Process = cmd
+	//task.Status = "running"
+
+	go func() {
+
+		scanner := bufio.NewScanner(io.MultiReader(stdoutPipe, stderrPipe))
+		scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+			if atEOF {
+				if len(data) > 0 {
+					return len(data), data, nil
+				}
+				return 0, nil, nil
+			}
+			for i := 0; i < len(data); i++ {
+				if data[i] == '\n' || data[i] == '\r' {
+					return i + 1, data[:i+1], nil
+				}
+			}
+			return 0, nil, nil
+		})
+
 		for scanner.Scan() {
 			line := scanner.Text()
 			//task.Output = append(task.Output, line)
