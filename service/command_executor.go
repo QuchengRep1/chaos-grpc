@@ -81,15 +81,26 @@ func (s *CommandExecutorServer) GetTaskOutput(ctx context.Context, req *pb.GetTa
 func (s *CommandExecutorServer) StartKafkaProducer(req *pb.StartTaskRequest, stream pb.CommandExecutor_StartKafkaProducerServer) error {
 	//return s.taskManager.StreamKafkaProducerTask(req.TaskId, stream)
 
-	args := []string{
-		"-h", "192.168.100.100",
-		"-p", "6379",
-		"-a", "qucheng",
-		"-n", "100000",
-		"-c", "20",
+	//redisArgs := []string{
+	//	"-h", "192.168.100.100",
+	//	"-p", "6379",
+	//	"-a", "qucheng",
+	//	"-n", "10000",
+	//	"-c", "20",
+	//}
+
+	kafkaArgs := []string{
+		"--topic", "perf",
+		"--num-records", "10000",
+		"--record-size", "1024",
+		"--throughput", "-1",
+		"--producer-props", "bootstrap.servers=192.168.100.100:9092",
+		"acks=0", "compression.type=snappy",
 	}
 
-	cmd := exec.Command("redis-benchmark", args...)
+	//cmd := exec.Command("redis-benchmark", redisArgs...)
+
+	cmd := exec.Command("/opt/kafkains/k1/bin/kafka-producer-perf-test.sh", kafkaArgs...)
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
@@ -103,9 +114,17 @@ func (s *CommandExecutorServer) StartKafkaProducer(req *pb.StartTaskRequest, str
 	if err := cmd.Start(); err != nil {
 		return err
 	}
+
+	done := make(chan error) // 用于通知主 goroutine 子 goroutine 已完成
+
 	// 3. 流式传输
 	go func() {
-		defer cmd.Wait()
+		defer func() {
+			if err := cmd.Wait(); err != nil {
+				log.Printf("Command exited: %v", err)
+			}
+			close(done) // 发送完成信号
+		}()
 
 		scanner := bufio.NewScanner(io.MultiReader(stdoutPipe, stderrPipe))
 		scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -138,7 +157,14 @@ func (s *CommandExecutorServer) StartKafkaProducer(req *pb.StartTaskRequest, str
 		}
 	}()
 
-	return nil
+	// 主 goroutine 阻塞，直到子 goroutine 完成或客户端断开
+	select {
+	case <-stream.Context().Done(): // 客户端断开
+		cmd.Process.Kill() // 确保命令终止
+		return stream.Context().Err()
+	case <-done: // 子 goroutine 正常结束
+		return nil
+	}
 
 }
 
