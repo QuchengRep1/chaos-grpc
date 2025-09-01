@@ -11,6 +11,8 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"os"
+	"strconv"
 
 	"gopkg.in/yaml.v3"
 
@@ -21,12 +23,36 @@ import (
 
 func main() {
 
+	nacosAddr := os.Getenv("CHAOS_NACOS_ADDR")
+	if nacosAddr == "" {
+		nacosAddr = "192.168.100.100"
+	}
+
+	nacosPortStr := os.Getenv("CHAOS_NACOS_PORT")
+	var nacosPort uint64
+	if nacosPortStr == "" {
+		nacosPort = 38848
+	} else {
+		var err error
+		nacosPort, err = strconv.ParseUint(nacosPortStr, 10, 16)
+		if err != nil {
+			// 处理错误，例如日志记录或使用默认值
+			nacosPort = 38848
+		}
+	}
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: "192.168.100.100", // Nacos 服务器地址
-			Port:   38848,             // Nacos 端口
+			IpAddr: nacosAddr, // Nacos 服务器地址
+			Port:   nacosPort, // Nacos 端口
 		},
 	}
+
+	//sc := []constant.ServerConfig{
+	//	{
+	//		IpAddr: "192.168.100.100", // Nacos 服务器地址
+	//		Port:   38848,             // Nacos 端口
+	//	},
+	//}
 
 	cc := constant.ClientConfig{
 		NamespaceId:         "public",
@@ -101,10 +127,28 @@ func logClientInterceptor(ctx context.Context, method string, req, reply interfa
 }
 
 func registerToNacos(grpcPort int) {
+
+	nacosAddr := os.Getenv("CHAOS_NACOS_ADDR")
+	if nacosAddr == "" {
+		nacosAddr = "192.168.100.100"
+	}
+
+	nacosPortStr := os.Getenv("CHAOS_NACOS_PORT")
+	var nacosPort uint64
+	if nacosPortStr == "" {
+		nacosPort = 38848
+	} else {
+		var err error
+		nacosPort, err = strconv.ParseUint(nacosPortStr, 10, 16)
+		if err != nil {
+			// 处理错误，例如日志记录或使用默认值
+			nacosPort = 38848
+		}
+	}
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: "192.168.100.100", // Nacos 服务器地址
-			Port:   38848,             // Nacos 端口
+			IpAddr: nacosAddr, // Nacos 服务器地址
+			Port:   nacosPort, // Nacos 端口
 		},
 	}
 
