@@ -4,19 +4,22 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+
 	config "github.com/QuchengRep1/chaos-grpc/config"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	//"encoding/json"
 	"fmt"
+
 	pb "github.com/QuchengRep1/chaos-grpc/proto"
 
-	"github.com/go-redis/redis/v8"
 	"io"
 	"log"
 	"os/exec"
 	"sync"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 const (
@@ -108,6 +111,8 @@ type KafkaProducerPerfSpec struct {
 	Loop         string `json:"loop,omitempty"`
 	LoopDuration string `json:"loopduration,omitempty"`
 	Recycle      string `json:"recycle,omitempty"`
+	Thread       string `json:"thread,omitempty"`    // ✅ 新增
+	BenchType    string `json:"benchtype,omitempty"` // ✅ 新增
 }
 
 type CommonInstance struct {
@@ -1197,6 +1202,13 @@ func (tm *TaskManager) processTaskInstance(ctx context.Context, key string) {
 		if instanceKP.Status != "running" {
 			return
 		}
+
+		// ✅ 跳过 concurrency 模式（由主进程管理）
+		if instanceKP.KubeObject.Spec.BenchType == "concurrency" {
+			log.Printf("[Recovery] Skipping concurrency mode KafkaProducer task %s (managed by main process)", instanceKP.TaskID)
+			return
+		}
+
 		tm.updateKPRedisStatus(instanceKP, "paused")
 
 	} else if instance.KubeObject.Kind == "KafkaConsumerPerf" && !exists {
